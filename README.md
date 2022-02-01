@@ -4,7 +4,10 @@ Dieses Git-Repo soll ein Proof of Concept vorlegen, wie ein mögliches Wordpress
 
 Wenn du Interesse hast, bei der Umsetzung des Plugins mitzuhelfen melde dich gern bei mir:
 
-* Lukas Dumberger: lukas.dumberger@gmail.com; [GitHub](https://github.com/DumbergerL)
+* Lukas Dumberger: 
+  * Email: lukas.dumberger@gmail.com
+  * CT-Forum: https://forum.church.tools/user/dumbergerl
+  * GitHub: https://github.com/DumbergerL
 * [Beitrag im ChurchTools-Forum](https://forum.church.tools/topic/8130/wordpress-formular-mit-ct-verbinden/4)
 
 ## Problemstellung und Zielsetzung
