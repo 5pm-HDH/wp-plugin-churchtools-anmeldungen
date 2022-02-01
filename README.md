@@ -8,7 +8,11 @@ Wenn du Interesse hast, bei der Umsetzung des Plugins mitzuhelfen melde dich ger
   * Email: lukas.dumberger@gmail.com
   * CT-Forum: https://forum.church.tools/user/dumbergerl
   * GitHub: https://github.com/DumbergerL
-* [Beitrag im ChurchTools-Forum](https://forum.church.tools/topic/8130/wordpress-formular-mit-ct-verbinden/4)
+
+Beiträge aus dem ChurchTools-Forum
+* [Wordpress Formular mit CT verbinden?](https://forum.church.tools/topic/8130/wordpress-formular-mit-ct-verbinden/4)
+* [Wordpress Plugin zur direkten Integration von Gruppenhomepages](https://forum.church.tools/topic/7528/wordpress-plugin-zur-direkten-integration-von-gruppenhomepages?_=1643706999789)
+   * Ansatz von skipy, der ein Gutenberg-Plugin dazu entwickelt hat. (client-seitiger Aufruf der CT-API)
 
 ## Problemstellung und Zielsetzung
 
@@ -36,3 +40,7 @@ Die Einbindung auf einer Seite erfolgt mittels Short-Code:
 
 * [CT-Api Wrapper](https://github.com/5pm-HDH/churchtools-api) für den Datentransfer
 * [Twig](https://twig.symfony.com/) als mögliche Template-Engine
+
+## Idee 2: "Client-seitiger API-Aufruf"
+
+Wurde bereits in einem ChurchTools-Forum Beitrag vorgestellt: https://forum.church.tools/topic/7528/wordpress-plugin-zur-direkten-integration-von-gruppenhomepages?_=1643706999789 Es gibt allerdings bisher kein weiterführendes Projekt hierzu.
