@@ -152,10 +152,6 @@ class Ct_Anmeldungen_Admin
                 submit_button(__('Save Settings', 'textdomain'));
                 ?>
             </form>
-            <h4>ShortCode:</h4>
-            <pre>[<?php echo(Ct_Anmeldungen_Public::$SHORTCODE); ?>]</pre>
-            <h4>Error-Log:</h4>
-            <pre><?php echo Ct_Anmeldungen::getTailOfWarningLog(5); ?></pre>
         </div>
         <?php
     }
@@ -172,6 +168,14 @@ class Ct_Anmeldungen_Admin
             "API-Settings",
             array($this, 'settings_section_callback'),
             self::$SETTINGS
+        );
+
+        add_settings_field(
+            Ct_Anmeldungen::$PLUGIN_SLUG . '_settings_field_shortcode',
+            'ShortCode',
+            array($this, 'settings_field_shortcode'),
+            self::$SETTINGS,
+            CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
 
         add_settings_field(
@@ -205,11 +209,31 @@ class Ct_Anmeldungen_Admin
             self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
+
+        add_settings_section(
+            CT_Anmeldungen::$PLUGIN_SLUG . '_log_section',
+            "Log-Datei",
+            array($this, 'log_section_callback'),
+            self::$SETTINGS
+        );
+
+        add_settings_field(
+            Ct_Anmeldungen::$PLUGIN_SLUG . '_settings_field_log',
+            'Warning- / Error-Log',
+            array($this, 'log_field_log'),
+            self::$SETTINGS,
+            CT_Anmeldungen::$PLUGIN_SLUG . '_log_section'
+        );
     }
 
     public function settings_section_callback()
     {
         echo '<p>Anmeldung konfigurieren.</p>';
+    }
+
+    public function settings_field_shortcode()
+    {
+        echo '<b><pre>['.Ct_Anmeldungen_Public::$SHORTCODE.']</pre></b>';
     }
 
     public function settings_field_url_callback()
@@ -257,5 +281,15 @@ class Ct_Anmeldungen_Admin
         } else {
             return $templateValue;
         }
+    }
+
+    public function log_section_callback()
+    {
+        echo '<p>Das Log enthält wichtige Aufzeichnungen über mögliche Fehler während der Ausführung des Plugins.</p>';
+    }
+
+    public function log_field_log()
+    {
+        echo '<pre style="overflow-x: scroll; padding: 1rem; max-width: 60rem;">'.Ct_Anmeldungen::getTailOfWarningLog(5).'</pre>';
     }
 }
