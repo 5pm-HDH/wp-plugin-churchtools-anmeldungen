@@ -173,9 +173,10 @@ class Ct_Anmeldungen {
 		$plugin_public = new Ct_Anmeldungen_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+        $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-	}
+        $this->loader->add_action( 'init', $plugin_public, 'init_shortcode' );
+    }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

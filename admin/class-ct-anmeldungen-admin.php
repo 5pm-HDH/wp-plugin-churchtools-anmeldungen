@@ -131,6 +131,7 @@ class Ct_Anmeldungen_Admin
                 submit_button(__('Save Settings', 'textdomain'));
                 ?>
             </form>
+            <p>ShortCode:<pre>[<?php echo(Ct_Anmeldungen_Public::$SHORTCODE); ?>]</pre></p>
         </div>
         <?php
     }

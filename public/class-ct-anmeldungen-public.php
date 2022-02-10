@@ -22,6 +22,8 @@
  */
 class Ct_Anmeldungen_Public {
 
+    public static $SHORTCODE = "ct-anmeldungen";
+
 	/**
 	 * The ID of this plugin.
 	 *
@@ -99,5 +101,16 @@ class Ct_Anmeldungen_Public {
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ct-anmeldungen-public.js', array( 'jquery' ), $this->version, false );
 
 	}
+
+	public function init_shortcode()
+    {
+        //exit($this->plugin_name);
+        add_shortcode( Ct_Anmeldungen_Public::$SHORTCODE, array($this, 'parse_shortcode'));
+    }
+
+	public function parse_shortcode()
+    {
+	    return "<h1>HELLO SHORTCODE WORLD!</h1>";
+    }
 
 }
