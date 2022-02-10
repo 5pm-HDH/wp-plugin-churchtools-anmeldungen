@@ -13,6 +13,8 @@
  * @subpackage Ct_Anmeldungen/includes
  */
 
+use Monolog\Logger;
+
 /**
  * The core plugin class.
  *
@@ -28,6 +30,8 @@
  * @author     Lukas Dumberger <lukas.dumberger@gmail.com>
  */
 class Ct_Anmeldungen {
+
+    public static $LOG;
 
     public static $PLUGIN_SLUG = "ct_anmeldungen";
     public static $PLUGIN_NAME = "ct-anmeldungen";
@@ -73,7 +77,16 @@ class Ct_Anmeldungen {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
-	}
+		self::$LOG = new Logger('PLUGIN_LOG');
+        self::$LOG->pushHandler(new \Monolog\Handler\StreamHandler(
+            plugin_dir_path( dirname( __FILE__ ) ) . 'logs/debug.log',
+            Logger::DEBUG
+        ));
+        self::$LOG->pushHandler(new \Monolog\Handler\StreamHandler(
+            plugin_dir_path( dirname( __FILE__ ) ) . 'logs/warning.log',
+            Logger::WARNING
+        ));
+    }
 
 	/**
 	 * Load the required dependencies for this plugin.
@@ -160,7 +173,7 @@ class Ct_Anmeldungen {
         $this->loader->add_action('admin_menu', $plugin_admin, 'options_page');
 
         $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_CHILD_TEMPLATE, Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
-        $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_CHILD_TEMPLATE, Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
+        $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_PARENT_TEMPLATE, Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
     }
 
 	/**

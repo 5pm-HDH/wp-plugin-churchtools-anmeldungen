@@ -70,6 +70,8 @@ class Ct_Anmeldungen_Admin
 
     public static function clone_templates_to_disk()
     {
+        Ct_Anmeldungen::$LOG->debug("Clone Parent- & Child-Templates to Disk. Directory:", [self::$TEMPLATE_DIR]);
+
         $parentTemplate = get_option(self::$OPTION_PARENT_TEMPLATE);
         file_put_contents(self::$TEMPLATE_DIR.self::$PARENT_TEMPLATE_NAME, $parentTemplate);
 

@@ -126,6 +126,7 @@ class Ct_Anmeldungen_Public {
         // Check if Child- & Parent-Template exists.
         if(!$twig->getLoader()->exists(Ct_Anmeldungen_Admin::$CHILD_TEMPLATE_NAME)
          || !$twig->getLoader()->exists(Ct_Anmeldungen_Admin::$PARENT_TEMPLATE_NAME)){
+            Ct_Anmeldungen::$LOG->info("Clone Child- & Parent-Template to disk, because its missing.");
             Ct_Anmeldungen_Admin::clone_templates_to_disk();
 
             // Reload Template-Directory
@@ -143,7 +144,8 @@ class Ct_Anmeldungen_Public {
 
             return $twig->render(Ct_Anmeldungen_Admin::$PARENT_TEMPLATE_NAME, ['children' => $childHtml]);
         } catch (LoaderError| RuntimeError| SyntaxError  $e) {
-            return "<h1>ERROR IN TWIG:</h1><p>".$e->getMessage()."</p>";
+            Ct_Anmeldungen::$LOG->error("Could not render Template:", [$e->getMessage()]);
+            return "";
         }
     }
 
@@ -153,6 +155,7 @@ class Ct_Anmeldungen_Public {
         $groupHash = get_option(Ct_Anmeldungen_Admin::$OPTION_GROUP_HASH);
 
         if(is_null($ctUrl) || $ctUrl == "" || is_null($groupHash) || $groupHash == ""){
+            Ct_Anmeldungen::$LOG->warning("Url or GroupHash is not configured in Settings.");
             return [];
         }
 
@@ -165,6 +168,7 @@ class Ct_Anmeldungen_Public {
             }, $publicGroup->getGroups());
 
         }catch(Exception $exception){
+            Ct_Anmeldungen::$LOG->error("Could not retrieve data from ChurchTools:", [$exception->getMessage()]);
             return [];
         }
     }

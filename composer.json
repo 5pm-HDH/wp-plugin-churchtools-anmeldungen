@@ -4,7 +4,8 @@
     "type": "wordpress-plugin",
     "require": {
         "twig/twig": "^3.3",
-        "5pm-hdh/churchtools-api": "dev-master"
+        "5pm-hdh/churchtools-api": "dev-master",
+        "monolog/monolog": "^2.3"
     },
     "license": "MIT",
     "authors": [
