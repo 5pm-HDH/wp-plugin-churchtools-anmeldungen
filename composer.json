@@ -1,0 +1,16 @@
+{
+    "name": "5pm-hdh/churchtools-anmeldungen",
+    "description": "Wordpress Plugin for ChurchTools Anmeldungen.",
+    "type": "wordpress-plugin",
+    "require": {
+        "twig/twig": "^3.3",
+        "5pm-hdh/churchtools-api": "^1.2"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukas Dumberger",
+            "email": "lukas.dumberger@gmail.com"
+        }
+    ]
+}
