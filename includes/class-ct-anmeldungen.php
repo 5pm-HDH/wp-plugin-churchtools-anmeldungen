@@ -119,7 +119,7 @@ class Ct_Anmeldungen {
         /**
          * Load Composer Dependencies
          */
-        //require_once plugin_dir_path( dirname( __FILE__ )) .'vendor/autoload.php';
+        require_once plugin_dir_path( dirname( __FILE__ )) .'vendor/autoload.php';
 
 		$this->loader = new Ct_Anmeldungen_Loader();
 
@@ -159,8 +159,8 @@ class Ct_Anmeldungen {
         $this->loader->add_action('admin_init', $plugin_admin, 'settings_init');
         $this->loader->add_action('admin_menu', $plugin_admin, 'options_page');
 
-        $this->loader->add_action('update_option_'.CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template', $plugin_admin, 'clone_templates_to_disk');
-        $this->loader->add_action('update_option_'.CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template', $plugin_admin, 'clone_templates_to_disk');
+        $this->loader->add_action('update_option_'.CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template', Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
+        $this->loader->add_action('update_option_'.CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template', Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
     }
 
 	/**

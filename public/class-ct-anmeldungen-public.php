@@ -10,6 +10,15 @@
  * @subpackage Ct_Anmeldungen/public
  */
 
+use CTApi\CTConfig;
+use CTApi\Models\PublicGroup;
+use CTApi\Requests\PublicGroupRequest;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -109,12 +118,61 @@ class Ct_Anmeldungen_Public {
 
 	public function parse_shortcode()
     {
-        $twigLoader = new \Twig\Loader\FilesystemLoader(Ct_Anmeldungen_Admin::$TEMPLATE_DIR);
-        $twig = new \Twig\Environment($twigLoader);
+        $twigLoader = new FilesystemLoader(Ct_Anmeldungen_Admin::$TEMPLATE_DIR);
+        $twig = new Environment($twigLoader);
 
+        // Check if Child- & Parent-Template exists.
+        if(!$twig->getLoader()->exists(Ct_Anmeldungen_Admin::$CHILD_TEMPLATE_NAME)
+         || !$twig->getLoader()->exists(Ct_Anmeldungen_Admin::$PARENT_TEMPLATE_NAME)){
+            Ct_Anmeldungen_Admin::clone_templates_to_disk();
 
+            // Reload Template-Directory
+            $twigLoader = new FilesystemLoader(Ct_Anmeldungen_Admin::$TEMPLATE_DIR);
+            $twig = new Environment($twigLoader);
+        }
 
-        return "<h1>HELLO SHORTCODE WORLD!</h1>";
+        try {
+            $ctData = $this->provide_churchtools_data();
+
+            $childHtml = "";
+            foreach($ctData as $groupData){
+                $childHtml .= $twig->render(Ct_Anmeldungen_Admin::$CHILD_TEMPLATE_NAME, $groupData);
+            }
+
+            return $twig->render(Ct_Anmeldungen_Admin::$PARENT_TEMPLATE_NAME, ['children' => $childHtml]);
+        } catch (LoaderError| RuntimeError| SyntaxError  $e) {
+            return "<h1>ERROR IN TWIG:</h1><p>".$e->getMessage()."</p>";
+        }
+    }
+
+    private function provide_churchtools_data()
+    {
+        $ctUrl = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url');
+        $groupHash = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash');
+
+        if(is_null($ctUrl) || $ctUrl == "" || is_null($groupHash) || $groupHash == ""){
+            return [];
+        }
+
+        CTConfig::setApiUrl($ctUrl);
+        $publicGroup = PublicGroupRequest::get($groupHash);
+        return array_map(function($groupObject){
+            return $this->parse_group_to_array($groupObject);
+        }, $publicGroup->getGroups());
+    }
+
+    private function parse_group_to_array(PublicGroup $group)
+    {
+        return [
+            'currentMemberCount' => $group->getCurrentMemberCount(),
+            'signUpHeadline' => $group->getSignUpHeadline(),
+            'id' => $group->getId(),
+            'guid' => $group->getGuid(),
+            'name' => $group->getName(),
+            'meetingTime' => $group->getInformation()?->getMeetingTime(),
+            'note' => $group->getInformation()?->getNote(),
+            'imageUrl' => $group->getInformation()?->getImageUrl(),
+        ];
     }
 
 }

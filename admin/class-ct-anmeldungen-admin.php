@@ -25,6 +25,10 @@ class Ct_Anmeldungen_Admin
 
     public static $TEMPLATE_DIR;
 
+    public static $PARENT_TEMPLATE_NAME = "parent-template.html.twig";
+    public static $CHILD_TEMPLATE_NAME = "child-template.html.twig";
+
+
     /**
      * The ID of this plugin.
      *
@@ -56,6 +60,15 @@ class Ct_Anmeldungen_Admin
         $this->version = $version;
 
         self::$TEMPLATE_DIR = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/templates/';
+    }
+
+    public static function clone_templates_to_disk()
+    {
+        $parentTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
+        file_put_contents(self::$TEMPLATE_DIR.self::$PARENT_TEMPLATE_NAME, $parentTemplate);
+
+        $childTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
+        file_put_contents(self::$TEMPLATE_DIR.self::$CHILD_TEMPLATE_NAME, $childTemplate);
     }
 
     /**
@@ -139,6 +152,7 @@ class Ct_Anmeldungen_Admin
     public function settings_init()
     {
         register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url', 'sanitize_url');
+        register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash');
         register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template', array($this, 'sanitize_parent_template'));
         register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template', array($this, 'sanitize_child_template'));
 
@@ -153,6 +167,14 @@ class Ct_Anmeldungen_Admin
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_url',
             'API_Url',
             array($this, 'settings_field_url_callback'),
+            CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
+            CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
+        );
+
+        add_settings_field(
+            CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_group_hash',
+            'Group Hash',
+            array($this, 'settings_field_group_hash_callback'),
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
@@ -174,15 +196,6 @@ class Ct_Anmeldungen_Admin
         );
     }
 
-    public function clone_templates_to_disk()
-    {
-        $parentTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
-        file_put_contents(self::$TEMPLATE_DIR.'parent-template.html.twig', $parentTemplate);
-
-        $childTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
-        file_put_contents(self::$TEMPLATE_DIR.'child-template.html.twig', $childTemplate);
-    }
-
     public function settings_section_callback()
     {
         echo '<p>Anmeldung konfigurieren.</p>';
@@ -193,6 +206,13 @@ class Ct_Anmeldungen_Admin
         $url = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url');
         echo '<input type="text" name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url' . '" value="' . (isset($url) ? esc_attr($url) : '') . '">';
     }
+
+    public function settings_field_group_hash_callback()
+    {
+        $groupHash = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash');
+        echo '<input type="text" name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash' . '" value="' . (isset($groupHash) ? esc_attr($groupHash) : '') . '">';
+    }
+
 
     public function settings_field_parent_template_callback()
     {
@@ -209,11 +229,11 @@ class Ct_Anmeldungen_Admin
     public function sanitize_parent_template($templateValue)
     {
 
-        if (strpos($templateValue, "{{ children }}") == false) {
+        if (strpos($templateValue, "{{ children|raw }}") == false) {
             add_settings_error(
                 CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template',
                 CT_Anmeldungen::$PLUGIN_SLUG . '_error_parent_template',
-                'Parent-Template muss {{ children }} - Element enthalten.',
+                'Parent-Template muss {{ children|raw }} - Element enthalten.',
                 'error'
             );
             return get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');

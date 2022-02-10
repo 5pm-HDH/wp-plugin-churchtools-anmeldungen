@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a65a9a6458c561d4d3e53b18705c126c",
+    "content-hash": "6f9567b5f6fb4177912082f5eabdd499",
     "packages": [
         {
             "name": "5pm-hdh/churchtools-api",
-            "version": "1.2.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/5pm-HDH/churchtools-api.git",
-                "reference": "48ada0bc2183212e91d07f38b081c3f4bc40910f"
+                "reference": "e089f9cd2fceedc54de99153030b2b59473f7b33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/5pm-HDH/churchtools-api/zipball/48ada0bc2183212e91d07f38b081c3f4bc40910f",
-                "reference": "48ada0bc2183212e91d07f38b081c3f4bc40910f",
+                "url": "https://api.github.com/repos/5pm-HDH/churchtools-api/zipball/e089f9cd2fceedc54de99153030b2b59473f7b33",
+                "reference": "e089f9cd2fceedc54de99153030b2b59473f7b33",
                 "shasum": ""
             },
             "require": {
@@ -30,6 +30,7 @@
                 "phpunit/phpunit": "9.5.4",
                 "vimeo/psalm": "^4.12"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "classmap": [
@@ -50,9 +51,9 @@
             "description": "API-client for churchtools",
             "support": {
                 "issues": "https://github.com/5pm-HDH/churchtools-api/issues",
-                "source": "https://github.com/5pm-HDH/churchtools-api/tree/1.2.0"
+                "source": "https://github.com/5pm-HDH/churchtools-api/tree/master"
             },
-            "time": "2022-01-12T10:51:19+00:00"
+            "time": "2022-01-29T17:17:26+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -1053,7 +1054,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "5pm-hdh/churchtools-api": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
