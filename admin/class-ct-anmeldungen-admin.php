@@ -28,6 +28,12 @@ class Ct_Anmeldungen_Admin
     public static $PARENT_TEMPLATE_NAME = "parent-template.html.twig";
     public static $CHILD_TEMPLATE_NAME = "child-template.html.twig";
 
+    public static $OPTION_URL = "ct_anmeldungen_settings_url";
+    public static $OPTION_GROUP_HASH = "ct_anmeldungen_settings_group_hash";
+    public static $OPTION_PARENT_TEMPLATE = "ct_anmeldungen_settings_parent_template";
+    public static $OPTION_CHILD_TEMPLATE = "ct_anmeldungen_settings_child_template";
+
+    private static $SETTINGS = "ct_anmeldungen_settings";
 
     /**
      * The ID of this plugin.
@@ -64,10 +70,10 @@ class Ct_Anmeldungen_Admin
 
     public static function clone_templates_to_disk()
     {
-        $parentTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
+        $parentTemplate = get_option(self::$OPTION_PARENT_TEMPLATE);
         file_put_contents(self::$TEMPLATE_DIR.self::$PARENT_TEMPLATE_NAME, $parentTemplate);
 
-        $childTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
+        $childTemplate = get_option(self::$OPTION_CHILD_TEMPLATE);
         file_put_contents(self::$TEMPLATE_DIR.self::$CHILD_TEMPLATE_NAME, $childTemplate);
     }
 
@@ -126,7 +132,7 @@ class Ct_Anmeldungen_Admin
             'ChurchTools Anmeldungen',
             'ChurchTools Anmeldungen',
             'manage_options',
-            CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
+            self::$SETTINGS,
             array($this, 'options_page_html')
         );
     }
@@ -138,9 +144,9 @@ class Ct_Anmeldungen_Admin
             <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
             <form action="options.php" method="post">
                 <?php
-                settings_fields(CT_Anmeldungen::$PLUGIN_SLUG . '_settings');
+                settings_fields(self::$SETTINGS);
                 settings_errors();
-                do_settings_sections(CT_Anmeldungen::$PLUGIN_SLUG . '_settings');
+                do_settings_sections(self::$SETTINGS);
                 submit_button(__('Save Settings', 'textdomain'));
                 ?>
             </form>
@@ -151,23 +157,23 @@ class Ct_Anmeldungen_Admin
 
     public function settings_init()
     {
-        register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url', 'sanitize_url');
-        register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash');
-        register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template', array($this, 'sanitize_parent_template'));
-        register_setting(CT_Anmeldungen::$PLUGIN_SLUG . '_settings', CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template', array($this, 'sanitize_child_template'));
+        register_setting(self::$SETTINGS, self::$OPTION_URL, 'sanitize_url');
+        register_setting(self::$SETTINGS, self::$OPTION_GROUP_HASH);
+        register_setting(self::$SETTINGS, self::$OPTION_PARENT_TEMPLATE, array($this, 'sanitize_parent_template'));
+        register_setting(self::$SETTINGS, self::$OPTION_CHILD_TEMPLATE, array($this, 'sanitize_child_template'));
 
         add_settings_section(
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section',
             "API-Settings",
             array($this, 'settings_section_callback'),
-            CT_Anmeldungen::$PLUGIN_SLUG . '_settings'
+            self::$SETTINGS
         );
 
         add_settings_field(
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_url',
             'API_Url',
             array($this, 'settings_field_url_callback'),
-            CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
+            self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
 
@@ -175,7 +181,7 @@ class Ct_Anmeldungen_Admin
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_group_hash',
             'Group Hash',
             array($this, 'settings_field_group_hash_callback'),
-            CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
+            self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
 
@@ -183,7 +189,7 @@ class Ct_Anmeldungen_Admin
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_parent_template',
             'Parent-Template',
             array($this, 'settings_field_parent_template_callback'),
-            CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
+            self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
 
@@ -191,7 +197,7 @@ class Ct_Anmeldungen_Admin
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_child_template',
             'Child-Template',
             array($this, 'settings_field_child_template_callback'),
-            CT_Anmeldungen::$PLUGIN_SLUG . '_settings',
+            self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
         );
     }
@@ -203,31 +209,31 @@ class Ct_Anmeldungen_Admin
 
     public function settings_field_url_callback()
     {
-        $url = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url');
-        echo '<input type="text" name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url' . '" value="' . (isset($url) ? esc_attr($url) : '') . '">';
+        $url = get_option(self::$OPTION_URL);
+        echo '<input type="text" name="' . self::$OPTION_URL . '" value="' . (isset($url) ? esc_attr($url) : '') . '">';
     }
 
     public function settings_field_group_hash_callback()
     {
-        $groupHash = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash');
-        echo '<input type="text" name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash' . '" value="' . (isset($groupHash) ? esc_attr($groupHash) : '') . '">';
+        $groupHash = get_option(self::$OPTION_GROUP_HASH);
+        echo '<input type="text" name="' . self::$OPTION_GROUP_HASH . '" value="' . (isset($groupHash) ? esc_attr($groupHash) : '') . '">';
     }
 
 
     public function settings_field_parent_template_callback()
     {
-        $template = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
+        $template = get_option(self::$OPTION_PARENT_TEMPLATE);
         wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_parent_template_editor', array(
-           'textarea_name' => CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template',
+           'textarea_name' => self::$OPTION_PARENT_TEMPLATE,
             'media_buttons' => false,
         ));
     }
 
     public function settings_field_child_template_callback()
     {
-        $template = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
+        $template = get_option(self::$OPTION_CHILD_TEMPLATE);
         wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_child_template_editor', array(
-            'textarea_name' => CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template',
+            'textarea_name' => self::$OPTION_CHILD_TEMPLATE,
             'media_buttons' => false,
         ));
     }
@@ -237,12 +243,12 @@ class Ct_Anmeldungen_Admin
 
         if (strpos($templateValue, "{{ children|raw }}") == false) {
             add_settings_error(
-                CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template',
+                self::$OPTION_PARENT_TEMPLATE,
                 CT_Anmeldungen::$PLUGIN_SLUG . '_error_parent_template',
                 'Parent-Template muss {{ children|raw }} - Element enthalten.',
                 'error'
             );
-            return get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
+            return get_option(self::$OPTION_PARENT_TEMPLATE);
         } else {
             return $templateValue;
         }

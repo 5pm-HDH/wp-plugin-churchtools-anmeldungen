@@ -13,6 +13,8 @@
 use CTApi\CTConfig;
 use CTApi\Models\PublicGroup;
 use CTApi\Requests\PublicGroupRequest;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\TransferException;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -147,18 +149,24 @@ class Ct_Anmeldungen_Public {
 
     private function provide_churchtools_data()
     {
-        $ctUrl = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url');
-        $groupHash = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_group_hash');
+        $ctUrl = get_option(Ct_Anmeldungen_Admin::$OPTION_URL);
+        $groupHash = get_option(Ct_Anmeldungen_Admin::$OPTION_GROUP_HASH);
 
         if(is_null($ctUrl) || $ctUrl == "" || is_null($groupHash) || $groupHash == ""){
             return [];
         }
 
-        CTConfig::setApiUrl($ctUrl);
-        $publicGroup = PublicGroupRequest::get($groupHash);
-        return array_map(function($groupObject){
-            return $this->parse_group_to_array($groupObject);
-        }, $publicGroup->getGroups());
+        try{
+            CTConfig::setApiUrl($ctUrl);
+
+            $publicGroup = PublicGroupRequest::get($groupHash);
+            return array_map(function($groupObject){
+                return $this->parse_group_to_array($groupObject);
+            }, $publicGroup->getGroups());
+
+        }catch(Exception $exception){
+            return [];
+        }
     }
 
     private function parse_group_to_array(PublicGroup $group)
