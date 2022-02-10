@@ -157,7 +157,9 @@ class Ct_Anmeldungen {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-	}
+        $this->loader->add_action('admin_init', $plugin_admin, 'settings_init');
+        $this->loader->add_action('admin_menu', $plugin_admin, 'options_page');
+    }
 
 	/**
 	 * Register all of the hooks related to the public-facing functionality
