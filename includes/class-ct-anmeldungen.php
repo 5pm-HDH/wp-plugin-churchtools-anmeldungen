@@ -29,6 +29,9 @@
  */
 class Ct_Anmeldungen {
 
+    public static $PLUGIN_SLUG = "ct_anmeldungen";
+    public static $PLUGIN_NAME = "ct-anmeldungen";
+
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
@@ -39,16 +42,7 @@ class Ct_Anmeldungen {
 	 */
 	protected $loader;
 
-	/**
-	 * The unique identifier of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
-	 */
-	protected $plugin_name;
-
-	/**
+    /**
 	 * The current version of the plugin.
 	 *
 	 * @since    1.0.0
@@ -122,6 +116,11 @@ class Ct_Anmeldungen {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-ct-anmeldungen-public.php';
 
+        /**
+         * Load Composer Dependencies
+         */
+        //require_once plugin_dir_path( dirname( __FILE__ )) .'vendor/autoload.php';
+
 		$this->loader = new Ct_Anmeldungen_Loader();
 
 	}
@@ -152,7 +151,7 @@ class Ct_Anmeldungen {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Ct_Anmeldungen_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Ct_Anmeldungen_Admin( self::$PLUGIN_NAME, $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -170,7 +169,7 @@ class Ct_Anmeldungen {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Ct_Anmeldungen_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Ct_Anmeldungen_Public( self::$PLUGIN_NAME, $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
         $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );

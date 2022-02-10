@@ -104,13 +104,12 @@ class Ct_Anmeldungen_Public {
 
 	public function init_shortcode()
     {
-        //exit($this->plugin_name);
         add_shortcode( Ct_Anmeldungen_Public::$SHORTCODE, array($this, 'parse_shortcode'));
     }
 
 	public function parse_shortcode()
     {
-	    return "<h1>HELLO SHORTCODE WORLD!</h1>";
+        return "<h1>HELLO SHORTCODE WORLD!</h1>";
     }
 
 }
