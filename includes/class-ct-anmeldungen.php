@@ -32,9 +32,11 @@ use Monolog\Logger;
 class Ct_Anmeldungen {
 
     public static $LOG;
+    private static $warningLogFile = "";
 
     public static $PLUGIN_SLUG = "ct_anmeldungen";
     public static $PLUGIN_NAME = "ct-anmeldungen";
+
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -82,10 +84,27 @@ class Ct_Anmeldungen {
             plugin_dir_path( dirname( __FILE__ ) ) . 'logs/debug.log',
             Logger::DEBUG
         ));
+
+        self::$warningLogFile = plugin_dir_path( dirname( __FILE__ ) ) . 'logs/warning.log';
         self::$LOG->pushHandler(new \Monolog\Handler\StreamHandler(
-            plugin_dir_path( dirname( __FILE__ ) ) . 'logs/warning.log',
+            self::$warningLogFile,
             Logger::WARNING
         ));
+    }
+
+    public static function getTailOfWarningLog(int $numberOfLines): string
+    {
+        $lines=array();
+        $fp = fopen(self::$warningLogFile, "r");
+        while(!feof($fp))
+        {
+            $line = fgets($fp, 4096);
+            array_push($lines, $line);
+            if (count($lines)>$numberOfLines)
+                array_shift($lines);
+        }
+        fclose($fp);
+        return implode("", $lines);
     }
 
 	/**

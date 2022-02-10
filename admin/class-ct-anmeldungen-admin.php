@@ -152,7 +152,10 @@ class Ct_Anmeldungen_Admin
                 submit_button(__('Save Settings', 'textdomain'));
                 ?>
             </form>
-            <p>ShortCode:<pre>[<?php echo(Ct_Anmeldungen_Public::$SHORTCODE); ?>]</pre></p>
+            <h4>ShortCode:</h4>
+            <pre>[<?php echo(Ct_Anmeldungen_Public::$SHORTCODE); ?>]</pre>
+            <h4>Error-Log:</h4>
+            <pre><?php echo Ct_Anmeldungen::getTailOfWarningLog(5); ?></pre>
         </div>
         <?php
     }
