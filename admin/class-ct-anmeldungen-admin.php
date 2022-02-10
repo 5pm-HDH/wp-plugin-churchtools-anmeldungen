@@ -217,13 +217,19 @@ class Ct_Anmeldungen_Admin
     public function settings_field_parent_template_callback()
     {
         $template = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
-        echo '<textarea name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template' . '">' . (isset($template) ? esc_attr($template) : '') . '</textarea>';
+        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_parent_template_editor', array(
+           'textarea_name' => CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template',
+            'media_buttons' => false,
+        ));
     }
 
     public function settings_field_child_template_callback()
     {
         $template = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
-        echo '<textarea name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template' . '">' . (isset($template) ? esc_attr($template) : '') . '</textarea>';
+        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_child_template_editor', array(
+            'textarea_name' => CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template',
+            'media_buttons' => false,
+        ));
     }
 
     public function sanitize_parent_template($templateValue)
