@@ -23,6 +23,8 @@
 class Ct_Anmeldungen_Admin
 {
 
+    public static $TEMPLATE_DIR;
+
     /**
      * The ID of this plugin.
      *
@@ -50,9 +52,10 @@ class Ct_Anmeldungen_Admin
      */
     public function __construct($plugin_name, $version)
     {
-
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+
+        self::$TEMPLATE_DIR = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/templates/';
     }
 
     /**
@@ -171,6 +174,15 @@ class Ct_Anmeldungen_Admin
         );
     }
 
+    public function clone_templates_to_disk()
+    {
+        $parentTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
+        file_put_contents(self::$TEMPLATE_DIR.'parent-template.html.twig', $parentTemplate);
+
+        $childTemplate = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
+        file_put_contents(self::$TEMPLATE_DIR.'child-template.html.twig', $childTemplate);
+    }
+
     public function settings_section_callback()
     {
         echo '<p>Anmeldung konfigurieren.</p>';
@@ -178,20 +190,20 @@ class Ct_Anmeldungen_Admin
 
     public function settings_field_url_callback()
     {
-        $setting = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url');
-        echo '<input type="text" name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url' . '" value="' . (isset($setting) ? esc_attr($setting) : '') . '">';
+        $url = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url');
+        echo '<input type="text" name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_url' . '" value="' . (isset($url) ? esc_attr($url) : '') . '">';
     }
 
     public function settings_field_parent_template_callback()
     {
-        $setting = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
-        echo '<textarea name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template' . '">' . (isset($setting) ? esc_attr($setting) : '') . '</textarea>';
+        $template = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template');
+        echo '<textarea name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template' . '">' . (isset($template) ? esc_attr($template) : '') . '</textarea>';
     }
 
     public function settings_field_child_template_callback()
     {
-        $setting = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
-        echo '<textarea name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template' . '">' . (isset($setting) ? esc_attr($setting) : '') . '</textarea>';
+        $template = get_option(CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template');
+        echo '<textarea name="' . CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template' . '">' . (isset($template) ? esc_attr($template) : '') . '</textarea>';
     }
 
     public function sanitize_parent_template($templateValue)

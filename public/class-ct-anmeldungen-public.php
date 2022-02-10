@@ -109,6 +109,11 @@ class Ct_Anmeldungen_Public {
 
 	public function parse_shortcode()
     {
+        $twigLoader = new \Twig\Loader\FilesystemLoader(Ct_Anmeldungen_Admin::$TEMPLATE_DIR);
+        $twig = new \Twig\Environment($twigLoader);
+
+
+
         return "<h1>HELLO SHORTCODE WORLD!</h1>";
     }
 

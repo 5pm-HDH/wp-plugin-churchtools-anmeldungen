@@ -158,6 +158,9 @@ class Ct_Anmeldungen {
 
         $this->loader->add_action('admin_init', $plugin_admin, 'settings_init');
         $this->loader->add_action('admin_menu', $plugin_admin, 'options_page');
+
+        $this->loader->add_action('update_option_'.CT_Anmeldungen::$PLUGIN_SLUG . '_settings_parent_template', $plugin_admin, 'clone_templates_to_disk');
+        $this->loader->add_action('update_option_'.CT_Anmeldungen::$PLUGIN_SLUG . '_settings_child_template', $plugin_admin, 'clone_templates_to_disk');
     }
 
 	/**
