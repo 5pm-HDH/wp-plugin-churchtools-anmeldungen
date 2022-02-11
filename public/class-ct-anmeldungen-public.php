@@ -13,8 +13,6 @@
 use CTApi\CTConfig;
 use CTApi\Models\PublicGroup;
 use CTApi\Requests\PublicGroupRequest;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\TransferException;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -163,8 +161,8 @@ class Ct_Anmeldungen_Public {
             CTConfig::setApiUrl($ctUrl);
 
             $publicGroup = PublicGroupRequest::get($groupHash);
-            return array_map(function($groupObject){
-                return $this->parse_group_to_array($groupObject);
+            return array_map(function($groupObject) use ($groupHash, $ctUrl) {
+                return $this->parse_group_to_array($groupObject, $ctUrl, $groupHash);
             }, $publicGroup->getGroups());
 
         }catch(Exception $exception){
@@ -173,9 +171,9 @@ class Ct_Anmeldungen_Public {
         }
     }
 
-    private function parse_group_to_array(PublicGroup $group)
+    private function parse_group_to_array(PublicGroup $group, String $ctUrl, String $publicGroupHash)
     {
-        return [
+        $groupData = [
             'currentMemberCount' => $group->getCurrentMemberCount(),
             'signUpHeadline' => $group->getSignUpHeadline(),
             'id' => $group->getId(),
@@ -184,7 +182,24 @@ class Ct_Anmeldungen_Public {
             'meetingTime' => $group->getInformation()?->getMeetingTime(),
             'note' => $group->getInformation()?->getNote(),
             'imageUrl' => $group->getInformation()?->getImageUrl(),
+            'registerLink' => $ctUrl . '/publicgroup/' . $group->getId() . '?hash=' . $publicGroupHash
         ];
+
+        if(!is_null($group->getInformation()?->getTargetGroup())){
+            $targetGroup = $group->getInformation()->getTargetGroup();
+            if(array_key_exists("nameTranslated", $targetGroup)){
+                $groupData['targetGroup'] = $targetGroup["nameTranslated"];
+            }
+        }
+
+        if(!is_null($group->getInformation()?->getGroupCategory())){
+            $groupCategory = $group->getInformation()?->getGroupCategory();
+            if(array_key_exists("nameTranslated", $groupCategory)){
+                $groupData['groupCategory'] = $groupCategory["nameTranslated"];
+            }
+        }
+
+        return $groupData;
     }
 
 }

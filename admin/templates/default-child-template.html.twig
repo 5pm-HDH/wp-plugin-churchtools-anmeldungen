@@ -1,0 +1,18 @@
+<div style="width: 18rem; display: flex; flex-direction: column; background-color: #fff; border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; word-wrap: break-word;">
+    {% if imageUrl %}
+        <img style="width: 100%; display: block;" src="{{ imageUrl }}">
+    {% endif %}
+    <div style="flex: 1 1 auto; padding: 1.25rem;">
+        <h4 style="font-size: 1.25rem; margin-bottom: .75rem;">{{ name }}</h4>
+        <i>{{ groupCategory }}</i>
+        <p style="margin-bottom: 1rem; max-height: 13rem; overflow-y: hidden;">{{ note }}</p>
+        <p>
+            {% if meetingTime %}<span><b>Wann?</b> {{ meetingTime }}</span>{% endif %}
+            {% if targetGroup %}<span><b>Wer?</b> {{ targetGroup }}</span>{% endif %}
+        </p>
+        <p>
+            <a style="background-color: #0069d9; color: #fff; text-align: center; padding: .375rem .75rem; margin-top: 2rem; border-radius: .25rem; text-decoration: none;"
+               href="{{ registerLink }}">Anmelden!</a>
+        </p>
+    </div>
+</div>

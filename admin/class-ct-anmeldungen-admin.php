@@ -33,6 +33,9 @@ class Ct_Anmeldungen_Admin
     public static $OPTION_PARENT_TEMPLATE = "ct_anmeldungen_settings_parent_template";
     public static $OPTION_CHILD_TEMPLATE = "ct_anmeldungen_settings_child_template";
 
+    public static $DEFAULT_PARENT_TEMPLATE = "default-parent-template.html.twig";
+    public static $DEFAULT_CHILD_TEMPLATE = "default-child-template.html.twig";
+
     public static $SETTINGS = "ct_anmeldungen_settings";
 
     /**
@@ -212,6 +215,26 @@ class Ct_Anmeldungen_Admin
             self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_log_section'
         );
+
+        $this->fields_set_default_value();
+    }
+
+    private function fields_set_default_value(){
+        $cloneTemplates = false;
+
+        if(get_option(self::$OPTION_PARENT_TEMPLATE) === false && file_exists(self::$TEMPLATE_DIR.self::$DEFAULT_PARENT_TEMPLATE)){
+            update_option(self::$OPTION_PARENT_TEMPLATE, file_get_contents(self::$TEMPLATE_DIR.self::$DEFAULT_PARENT_TEMPLATE));
+            $cloneTemplates = true;
+        }
+
+        if(get_option(self::$OPTION_CHILD_TEMPLATE) === false && file_exists(self::$TEMPLATE_DIR.self::$DEFAULT_CHILD_TEMPLATE)){
+            update_option(self::$OPTION_CHILD_TEMPLATE, file_get_contents(self::$TEMPLATE_DIR.self::$DEFAULT_CHILD_TEMPLATE));
+            $cloneTemplates = true;
+        }
+
+        if($cloneTemplates == true){
+            Ct_Anmeldungen_Admin::clone_templates_to_disk();
+        }
     }
 
     public function settings_section_callback()
