@@ -33,7 +33,7 @@ class Ct_Anmeldungen_Admin
     public static $OPTION_PARENT_TEMPLATE = "ct_anmeldungen_settings_parent_template";
     public static $OPTION_CHILD_TEMPLATE = "ct_anmeldungen_settings_child_template";
 
-    private static $SETTINGS = "ct_anmeldungen_settings";
+    public static $SETTINGS = "ct_anmeldungen_settings";
 
     /**
      * The ID of this plugin.
@@ -141,19 +141,7 @@ class Ct_Anmeldungen_Admin
 
     public function options_page_html()
     {
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields(self::$SETTINGS);
-                settings_errors();
-                do_settings_sections(self::$SETTINGS);
-                submit_button(__('Save Settings', 'textdomain'));
-                ?>
-            </form>
-        </div>
-        <?php
+        include (__DIR__ . '/partials/ct-anmeldungen-admin-display.php');
     }
 
     public function settings_init()

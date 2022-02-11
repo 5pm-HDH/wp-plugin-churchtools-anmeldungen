@@ -1,16 +1,11 @@
-<?php
-
-/**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
- *
- * @link       lukasdumberger.de
- * @since      1.0.0
- *
- * @package    Ct_Anmeldungen
- * @subpackage Ct_Anmeldungen/admin/partials
- */
-?>
-
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<div class="wrap">
+    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+    <form action="options.php" method="post">
+        <?php
+        settings_fields(Ct_Anmeldungen_Admin::$SETTINGS);
+        settings_errors();
+        do_settings_sections(Ct_Anmeldungen_Admin::$SETTINGS);
+        submit_button(__('Save Settings', 'textdomain'));
+        ?>
+    </form>
+</div>
