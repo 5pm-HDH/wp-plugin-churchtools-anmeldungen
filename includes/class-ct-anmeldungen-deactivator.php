@@ -20,17 +20,16 @@
  * @subpackage Ct_Anmeldungen/includes
  * @author     Lukas Dumberger <lukas.dumberger@gmail.com>
  */
-class Ct_Anmeldungen_Deactivator {
-
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
-	public static function deactivate() {
-
-	}
-
+class Ct_Anmeldungen_Deactivator
+{
+    /**
+     * Short Description. (use period)
+     *
+     * Long Description.
+     *
+     * @since    1.0.0
+     */
+    public static function deactivate()
+    {
+    }
 }

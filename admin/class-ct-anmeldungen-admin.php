@@ -22,7 +22,6 @@
  */
 class Ct_Anmeldungen_Admin
 {
-
     public static $TEMPLATE_DIR;
 
     public static $PARENT_TEMPLATE_NAME = "parent-template.html.twig";
@@ -65,7 +64,7 @@ class Ct_Anmeldungen_Admin
         $this->plugin_name = $plugin_name;
         $this->version = $version;
 
-        self::$TEMPLATE_DIR = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/templates/';
+        self::$TEMPLATE_DIR = plugin_dir_path(dirname(__FILE__)) . 'admin/templates/';
     }
 
     public static function clone_templates_to_disk()
@@ -73,10 +72,10 @@ class Ct_Anmeldungen_Admin
         Ct_Anmeldungen::$LOG->debug("Clone Parent- & Child-Templates to Disk. Directory:", [self::$TEMPLATE_DIR]);
 
         $parentTemplate = get_option(self::$OPTION_PARENT_TEMPLATE);
-        file_put_contents(self::$TEMPLATE_DIR.self::$PARENT_TEMPLATE_NAME, $parentTemplate);
+        file_put_contents(self::$TEMPLATE_DIR . self::$PARENT_TEMPLATE_NAME, $parentTemplate);
 
         $childTemplate = get_option(self::$OPTION_CHILD_TEMPLATE);
-        file_put_contents(self::$TEMPLATE_DIR.self::$CHILD_TEMPLATE_NAME, $childTemplate);
+        file_put_contents(self::$TEMPLATE_DIR . self::$CHILD_TEMPLATE_NAME, $childTemplate);
     }
 
     /**
@@ -100,7 +99,6 @@ class Ct_Anmeldungen_Admin
          */
 
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/ct-anmeldungen-admin.css', array(), $this->version, 'all');
-
     }
 
     /**
@@ -124,7 +122,6 @@ class Ct_Anmeldungen_Admin
          */
 
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/ct-anmeldungen-admin.js', array('jquery'), $this->version, false);
-
     }
 
 
@@ -233,7 +230,7 @@ class Ct_Anmeldungen_Admin
 
     public function settings_field_shortcode()
     {
-        echo '<b><pre>['.Ct_Anmeldungen_Public::$SHORTCODE.']</pre></b>';
+        echo '<b><pre>[' . Ct_Anmeldungen_Public::$SHORTCODE . ']</pre></b>';
     }
 
     public function settings_field_url_callback()
@@ -252,7 +249,7 @@ class Ct_Anmeldungen_Admin
     public function settings_field_parent_template_callback()
     {
         $template = get_option(self::$OPTION_PARENT_TEMPLATE);
-        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_parent_template_editor', array(
+        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG . '_parent_template_editor', array(
            'textarea_name' => self::$OPTION_PARENT_TEMPLATE,
             'media_buttons' => false,
         ));
@@ -261,7 +258,7 @@ class Ct_Anmeldungen_Admin
     public function settings_field_child_template_callback()
     {
         $template = get_option(self::$OPTION_CHILD_TEMPLATE);
-        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_child_template_editor', array(
+        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG . '_child_template_editor', array(
             'textarea_name' => self::$OPTION_CHILD_TEMPLATE,
             'media_buttons' => false,
         ));
@@ -290,6 +287,6 @@ class Ct_Anmeldungen_Admin
 
     public function log_field_log()
     {
-        echo '<pre style="overflow-x: scroll; padding: 1rem; max-width: 60rem;">'.Ct_Anmeldungen::getTailOfWarningLog(5).'</pre>';
+        echo '<pre style="overflow-x: scroll; padding: 1rem; max-width: 60rem;">' . Ct_Anmeldungen::getTailOfWarningLog(5) . '</pre>';
     }
 }
