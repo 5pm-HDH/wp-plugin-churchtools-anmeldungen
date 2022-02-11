@@ -7,11 +7,13 @@
         <i>{{ groupCategory }}</i>
         <p style="margin-bottom: 1rem; max-height: 13rem; overflow-y: hidden;">{{ note }}</p>
         <p>
-            {% if meetingTime %}<span><b>Wann?</b> {{ meetingTime }}</span>{% endif %}
-            {% if targetGroup %}<span><b>Wer?</b> {{ targetGroup }}</span>{% endif %}
+            {% if meetingTime %}<span><b>Wann?</b> {{ meetingTime }}</span>{% endif %}<br>
+            {% if targetGroup %}<span><b>Wer?</b> {{ targetGroup }}</span>{% endif %}<br>
+            {% if groupPlace %}<span><b>Wo?</b> {{ groupPlace }}</span>{% endif %}<br>
         </p>
         <p>
             <a style="background-color: #0069d9; color: #fff; text-align: center; padding: .375rem .75rem; margin-top: 2rem; border-radius: .25rem; text-decoration: none;"
+               target="_blank"
                href="{{ registerLink }}">Anmelden!</a>
         </p>
     </div>

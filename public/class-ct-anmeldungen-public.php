@@ -11,6 +11,7 @@
  */
 
 use CTApi\CTConfig;
+use CTApi\Models\GroupPlace;
 use CTApi\Models\PublicGroup;
 use CTApi\Requests\PublicGroupRequest;
 use Twig\Environment;
@@ -161,8 +162,8 @@ class Ct_Anmeldungen_Public {
             CTConfig::setApiUrl($ctUrl);
 
             $publicGroup = PublicGroupRequest::get($groupHash);
-            return array_map(function($groupObject) use ($groupHash, $ctUrl) {
-                return $this->parse_group_to_array($groupObject, $ctUrl, $groupHash);
+            return array_map(function($groupObject) use ($groupHash) {
+                return $this->parse_group_to_array($groupObject, $groupHash);
             }, $publicGroup->getGroups());
 
         }catch(Exception $exception){
@@ -171,32 +172,34 @@ class Ct_Anmeldungen_Public {
         }
     }
 
-    private function parse_group_to_array(PublicGroup $group, String $ctUrl, String $publicGroupHash)
+    private function parse_group_to_array(PublicGroup $group, string $publicGroupHash)
     {
         $groupData = [
-            'currentMemberCount' => $group->getCurrentMemberCount(),
-            'signUpHeadline' => $group->getSignUpHeadline(),
             'id' => $group->getId(),
             'guid' => $group->getGuid(),
             'name' => $group->getName(),
-            'meetingTime' => $group->getInformation()?->getMeetingTime(),
             'note' => $group->getInformation()?->getNote(),
             'imageUrl' => $group->getInformation()?->getImageUrl(),
-            'registerLink' => $ctUrl . '/publicgroup/' . $group->getId() . '?hash=' . $publicGroupHash
+
+            'maxMemberCount' => $group->getMaxMemberCount(),
+            'currentMemberCount' => $group->getCurrentMemberCount(),
+
+            'signUpHeadline' => $group->getSignUpHeadline(),
+            'meetingTime' => $group->getInformation()?->getMeetingTime(),
+            'targetGroup' => $group->getInformation()?->getTargetGroup()?->getNameTranslated(),
+            'groupCategory' => $group->getInformation()?->getGroupCategory()?->getNameTranslated(),
+            'groupPlace' => null,
+
+            'registerLink' => $group->generateRegistrationLink($publicGroupHash),
+
+            'groupObject' => $group,
         ];
 
-        if(!is_null($group->getInformation()?->getTargetGroup())){
-            $targetGroup = $group->getInformation()->getTargetGroup();
-            if(array_key_exists("nameTranslated", $targetGroup)){
-                $groupData['targetGroup'] = $targetGroup["nameTranslated"];
-            }
-        }
-
-        if(!is_null($group->getInformation()?->getGroupCategory())){
-            $groupCategory = $group->getInformation()?->getGroupCategory();
-            if(array_key_exists("nameTranslated", $groupCategory)){
-                $groupData['groupCategory'] = $groupCategory["nameTranslated"];
-            }
+        $groupPlaces = $group->getInformation()?->getGroupPlaces();
+        if(!is_null($groupPlaces) && !empty($groupPlaces)){
+            $groupData['groupPlace'] = implode(", ", array_map(function(GroupPlace $group){
+                return $group->getName();
+            }, $groupPlaces));
         }
 
         return $groupData;

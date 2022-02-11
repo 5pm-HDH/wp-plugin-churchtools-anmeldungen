@@ -276,6 +276,7 @@ class Ct_Anmeldungen_Admin
             'textarea_name' => self::$OPTION_CHILD_TEMPLATE,
             'media_buttons' => false,
         ));
+        echo file_get_contents(__DIR__.'/partials/ct-anmeldungen-admin-child-template-fields.php');
     }
 
     public function sanitize_parent_template($templateValue)

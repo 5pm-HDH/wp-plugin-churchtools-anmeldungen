@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "5pm-hdh/churchtools-api",
-            "version": "1.3.0",
+            "version": "1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/5pm-HDH/churchtools-api.git",
-                "reference": "d3c81507695301564502019add6361d63d735a7f"
+                "reference": "ba789d8a1a79c676126144cc681dd813ffcd896b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/5pm-HDH/churchtools-api/zipball/d3c81507695301564502019add6361d63d735a7f",
-                "reference": "d3c81507695301564502019add6361d63d735a7f",
+                "url": "https://api.github.com/repos/5pm-HDH/churchtools-api/zipball/ba789d8a1a79c676126144cc681dd813ffcd896b",
+                "reference": "ba789d8a1a79c676126144cc681dd813ffcd896b",
                 "shasum": ""
             },
             "require": {
@@ -50,9 +50,9 @@
             "description": "API-client for churchtools",
             "support": {
                 "issues": "https://github.com/5pm-HDH/churchtools-api/issues",
-                "source": "https://github.com/5pm-HDH/churchtools-api/tree/1.3.0"
+                "source": "https://github.com/5pm-HDH/churchtools-api/tree/1.3.1"
             },
-            "time": "2022-02-11T07:56:55+00:00"
+            "time": "2022-02-11T14:58:43+00:00"
         },
         {
             "name": "doctrine/cache",
