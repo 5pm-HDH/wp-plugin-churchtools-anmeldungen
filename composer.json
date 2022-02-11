@@ -17,10 +17,5 @@
     "require-dev": {
         "wp-coding-standards/wpcs": "^2.3",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
-    },
-    "scripts": {
-        "phpcs-w": "vendor\\bin\\phpcs.bat --ignore=*/vendor/* --standard=WordPress --extensions=php --standard=PSR12 .",
-        "phpcs": "vendor/bin/phpcs --ignore=*/vendor/* --standard=WordPress --extensions=php --standard=PSR12 .",
-        "phpcbf-w": "vendor\\bin\\phpcbf.bat --ignore=*/vendor/* --standard=WordPress --extensions=php --standard=PSR12 ."
     }
 }
