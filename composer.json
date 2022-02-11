@@ -19,7 +19,8 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2"
     },
     "scripts": {
-        "phpcs-w": "vendor\\bin\\phpcs.bat --standard=WordPress --extensions=php --standard=PSR12 .",
-        "phpcs": "vendor/bin/phpcs --standard=WordPress --extensions=php --standard=PSR12 ."
+        "phpcs-w": "vendor\\bin\\phpcs.bat --ignore=*/vendor/* --standard=WordPress --extensions=php --standard=PSR12 .",
+        "phpcs": "vendor/bin/phpcs --ignore=*/vendor/* --standard=WordPress --extensions=php --standard=PSR12 .",
+        "phpcbf-w": "vendor\\bin\\phpcbf.bat --ignore=*/vendor/* --standard=WordPress --extensions=php --standard=PSR12 ."
     }
 }
