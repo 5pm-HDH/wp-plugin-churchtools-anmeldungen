@@ -94,6 +94,10 @@ class Ct_Anmeldungen {
 
     public static function getTailOfWarningLog(int $numberOfLines): string
     {
+        if(!file_exists(self::$warningLogFile)){
+            return "";
+        }
+
         $lines = array();
         $fp = fopen(self::$warningLogFile, "r");
         while (!feof($fp)) {
