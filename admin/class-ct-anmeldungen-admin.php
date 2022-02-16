@@ -33,7 +33,10 @@ class Ct_Anmeldungen_Admin
     public static $OPTION_PARENT_TEMPLATE = "ct_anmeldungen_settings_parent_template";
     public static $OPTION_CHILD_TEMPLATE = "ct_anmeldungen_settings_child_template";
 
-    private static $SETTINGS = "ct_anmeldungen_settings";
+    public static $DEFAULT_PARENT_TEMPLATE = "default-parent-template.html.twig";
+    public static $DEFAULT_CHILD_TEMPLATE = "default-child-template.html.twig";
+
+    public static $SETTINGS = "ct_anmeldungen_settings";
 
     /**
      * The ID of this plugin.
@@ -141,19 +144,7 @@ class Ct_Anmeldungen_Admin
 
     public function options_page_html()
     {
-        ?>
-        <div class="wrap">
-            <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-            <form action="options.php" method="post">
-                <?php
-                settings_fields(self::$SETTINGS);
-                settings_errors();
-                do_settings_sections(self::$SETTINGS);
-                submit_button(__('Save Settings', 'textdomain'));
-                ?>
-            </form>
-        </div>
-        <?php
+        include (__DIR__ . '/partials/ct-anmeldungen-admin-display.php');
     }
 
     public function settings_init()
@@ -224,6 +215,26 @@ class Ct_Anmeldungen_Admin
             self::$SETTINGS,
             CT_Anmeldungen::$PLUGIN_SLUG . '_log_section'
         );
+
+        $this->fields_set_default_value();
+    }
+
+    private function fields_set_default_value(){
+        $cloneTemplates = false;
+
+        if(get_option(self::$OPTION_PARENT_TEMPLATE) === false && file_exists(self::$TEMPLATE_DIR.self::$DEFAULT_PARENT_TEMPLATE)){
+            update_option(self::$OPTION_PARENT_TEMPLATE, file_get_contents(self::$TEMPLATE_DIR.self::$DEFAULT_PARENT_TEMPLATE));
+            $cloneTemplates = true;
+        }
+
+        if(get_option(self::$OPTION_CHILD_TEMPLATE) === false && file_exists(self::$TEMPLATE_DIR.self::$DEFAULT_CHILD_TEMPLATE)){
+            update_option(self::$OPTION_CHILD_TEMPLATE, file_get_contents(self::$TEMPLATE_DIR.self::$DEFAULT_CHILD_TEMPLATE));
+            $cloneTemplates = true;
+        }
+
+        if($cloneTemplates == true){
+            Ct_Anmeldungen_Admin::clone_templates_to_disk();
+        }
     }
 
     public function settings_section_callback()
@@ -265,6 +276,7 @@ class Ct_Anmeldungen_Admin
             'textarea_name' => self::$OPTION_CHILD_TEMPLATE,
             'media_buttons' => false,
         ));
+        echo file_get_contents(__DIR__.'/partials/ct-anmeldungen-admin-child-template-fields.php');
     }
 
     public function sanitize_parent_template($templateValue)

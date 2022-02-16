@@ -11,10 +11,9 @@
  */
 
 use CTApi\CTConfig;
+use CTApi\Models\GroupPlace;
 use CTApi\Models\PublicGroup;
 use CTApi\Requests\PublicGroupRequest;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\TransferException;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -163,8 +162,8 @@ class Ct_Anmeldungen_Public {
             CTConfig::setApiUrl($ctUrl);
 
             $publicGroup = PublicGroupRequest::get($groupHash);
-            return array_map(function($groupObject){
-                return $this->parse_group_to_array($groupObject);
+            return array_map(function($groupObject) use ($groupHash) {
+                return $this->parse_group_to_array($groupObject, $groupHash);
             }, $publicGroup->getGroups());
 
         }catch(Exception $exception){
@@ -173,18 +172,37 @@ class Ct_Anmeldungen_Public {
         }
     }
 
-    private function parse_group_to_array(PublicGroup $group)
+    private function parse_group_to_array(PublicGroup $group, string $publicGroupHash)
     {
-        return [
-            'currentMemberCount' => $group->getCurrentMemberCount(),
-            'signUpHeadline' => $group->getSignUpHeadline(),
+        $groupData = [
             'id' => $group->getId(),
             'guid' => $group->getGuid(),
             'name' => $group->getName(),
-            'meetingTime' => $group->getInformation()?->getMeetingTime(),
             'note' => $group->getInformation()?->getNote(),
             'imageUrl' => $group->getInformation()?->getImageUrl(),
+
+            'maxMemberCount' => $group->getMaxMemberCount(),
+            'currentMemberCount' => $group->getCurrentMemberCount(),
+
+            'signUpHeadline' => $group->getSignUpHeadline(),
+            'meetingTime' => $group->getInformation()?->getMeetingTime(),
+            'targetGroup' => $group->getInformation()?->getTargetGroup()?->getNameTranslated(),
+            'groupCategory' => $group->getInformation()?->getGroupCategory()?->getNameTranslated(),
+            'groupPlace' => null,
+
+            'registerLink' => $group->generateRegistrationLink($publicGroupHash),
+
+            'groupObject' => $group,
         ];
+
+        $groupPlaces = $group->getInformation()?->getGroupPlaces();
+        if(!is_null($groupPlaces) && !empty($groupPlaces)){
+            $groupData['groupPlace'] = implode(", ", array_map(function(GroupPlace $group){
+                return $group->getName();
+            }, $groupPlaces));
+        }
+
+        return $groupData;
     }
 
 }
