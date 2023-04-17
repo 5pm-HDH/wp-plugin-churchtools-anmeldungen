@@ -1,0 +1,89 @@
+{
+  "id": 2021,
+  "name": "Die Kunst, Feedback zu geben und zu nehmen",
+  "information": {
+    "meetingTime": "Mittwoch | 26. April | 19:30 Uhr",
+    "dateOfFoundation": "2023-04-25T22:00:00.000000Z",
+    "weekday": null,
+    "groupCategory": {
+      "id": 4,
+      "name": "Seminar",
+      "nameTranslated": "Seminar",
+      "sortKey": 0
+    },
+    "ageGroups": [
+      {
+        "id": 4,
+        "name": "20er",
+        "nameTranslated": "20er",
+        "start": 20,
+        "end": 29,
+        "sortKey": 8
+      },
+      {
+        "id": 5,
+        "name": "30-59",
+        "nameTranslated": "30-59",
+        "start": 30,
+        "end": 59,
+        "sortKey": 9
+      },
+      {
+        "id": 8,
+        "name": "60+",
+        "nameTranslated": "60+",
+        "start": 60,
+        "end": 120,
+        "sortKey": 10
+      }
+    ],
+    "targetGroup": {
+      "id": 16,
+      "name": "Die ganze Gemeinde",
+      "nameTranslated": "Die ganze Gemeinde",
+      "sortKey": 0
+    },
+    "note": "\u201eNix g\u2018schw\u00e4tzt isch g\u2018lobt g\u2019nug\u201c \u2013 alte schw\u00e4bische Maxime. Aber m\u00f6gen wir das\nwirklich? Gibt es da keine g\u00fcnstigeren Umgangsformen? Wie kann ich durch\nunterst\u00fctzende Worte das Miteinander, das Engagement und die Freude am Dienst\nf\u00f6rdern? Und wie formuliere ich es, wenn mal etwas schief gegangen ist oder ein Tun, ein Wort oder eine Geste unangemessen war?\nWie schaffe ich es, Klarheit und Wahrheit wertsch\u00e4tzend miteinander zu verbinden?\nHierauf wollen wir gemeinsam Antworten finden.\n\n**Termin:** Dienstag, 26. April 2023, um 19:30 Uhr\n**Leitung:** Siemen van Freeden\n",
+    "campus": null,
+    "groupPlaces": [],
+    "imageUrl": "https:\/\/bruecke.church.tools\/images\/13230\/fd83a198681a0f3770e64b1b7099c3e4de04389ec04939c7c097173614030336"
+  },
+  "settings": {
+    "allowOtherRegistration": false,
+    "allowSameemailRegistration": true,
+    "allowChildRegistration": false,
+    "allowSpouseRegistration": true,
+    "hideContactLeader": false,
+    "hideLogin": false,
+    "signUpNotificationSent": null
+  },
+  "autoAccept": true,
+  "allowWaitinglist": false,
+  "waitinglistMaxPersons": null,
+  "maxMemberCount": null,
+  "currentMemberCount": 14,
+  "requestedPlacesCount": 0,
+  "requestedWaitinglistPlacesCount": 0,
+  "canSignUp": true,
+  "signUpConditions": {
+    "groupIsNotHidden": true,
+    "groupIsActive": true,
+    "groupIsOpenForMembers": true,
+    "groupIsNotFull": true,
+    "groupHasSpaceForRequests": true,
+    "groupAllowsWaitinglist": false,
+    "groupHasSpaceOnWaitinglist": true,
+    "groupHasLeader": true,
+    "endDateNotPassed": true,
+    "defaultRoleSetInGroup": true,
+    "groupIsPublic": true,
+    "canContactLeader": true,
+    "newPersonStationIsSet": true,
+    "newPersonStatusIsSet": true,
+    "newPersonDepartmentIsSet": true,
+    "groupVisibility": "public"
+  },
+  "signUpHeadline": "Zu Seminare und Ma\u00dfnahmen anmelden",
+  "showPublicCannotViewGroup": false,
+  "children": []
+}

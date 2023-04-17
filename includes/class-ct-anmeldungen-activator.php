@@ -30,7 +30,7 @@ class Ct_Anmeldungen_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-
+        Ct_Anmeldungen_Admin::clone_templates_to_disk();
 	}
 
 }

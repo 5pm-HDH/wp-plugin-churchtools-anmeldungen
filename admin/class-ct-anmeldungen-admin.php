@@ -10,6 +10,9 @@
  * @subpackage Ct_Anmeldungen/admin
  */
 
+use CTApi\CTConfig;
+use CTApi\Models\PublicGroup;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -31,9 +34,12 @@ class Ct_Anmeldungen_Admin
     public static $OPTION_URL = "ct_anmeldungen_settings_url";
     public static $OPTION_GROUP_HASH = "ct_anmeldungen_settings_group_hash";
     public static $OPTION_PARENT_TEMPLATE = "ct_anmeldungen_settings_parent_template";
+    public static $OPTION_NR_OF_CHILDREN = "ct_anmeldungen_settings_nr_of_children";
     public static $OPTION_CHILD_TEMPLATE = "ct_anmeldungen_settings_child_template";
 
     private static $SETTINGS = "ct_anmeldungen_settings";
+
+    private static $EXAMPLE_DATA = __DIR__ . "/example-data.json";
 
     /**
      * The ID of this plugin.
@@ -65,7 +71,7 @@ class Ct_Anmeldungen_Admin
         $this->plugin_name = $plugin_name;
         $this->version = $version;
 
-        self::$TEMPLATE_DIR = plugin_dir_path( dirname( __FILE__ ) ) . 'admin/templates/';
+        self::$TEMPLATE_DIR = plugin_dir_path(dirname(__FILE__)) . 'admin/templates/';
     }
 
     public static function clone_templates_to_disk()
@@ -73,10 +79,49 @@ class Ct_Anmeldungen_Admin
         Ct_Anmeldungen::$LOG->debug("Clone Parent- & Child-Templates to Disk. Directory:", [self::$TEMPLATE_DIR]);
 
         $parentTemplate = get_option(self::$OPTION_PARENT_TEMPLATE);
-        file_put_contents(self::$TEMPLATE_DIR.self::$PARENT_TEMPLATE_NAME, $parentTemplate);
+        if($parentTemplate == null || $parentTemplate == ""){
+            $parentTemplate = self::default_parent_template();
+        }
+        file_put_contents(self::$TEMPLATE_DIR . self::$PARENT_TEMPLATE_NAME, $parentTemplate);
 
         $childTemplate = get_option(self::$OPTION_CHILD_TEMPLATE);
-        file_put_contents(self::$TEMPLATE_DIR.self::$CHILD_TEMPLATE_NAME, $childTemplate);
+        if($childTemplate == null || $childTemplate == ""){
+            $childTemplate = self::default_child_template();
+        }
+        file_put_contents(self::$TEMPLATE_DIR . self::$CHILD_TEMPLATE_NAME, $childTemplate);
+    }
+
+    public static function default_parent_template(): string
+    {
+        return
+            '<div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+               {{ children|raw }}
+            </div>';
+    }
+
+    public static function default_child_template(): string
+    {
+        return
+            '<div
+                style="border-radius: 1rem; display: flex; flex-direction: column; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
+                <div><img style="width: 100%; border-radius: 1rem 1rem 0 0;" src="{{ information.imageUrlBanner }}" /></div>
+                <div style="padding: 1rem;">
+                    <h3>{{ name }}</h3>
+                    <i>
+                        {{ information.meetingTime }}
+                        {% if (currentMemberCount != null and maxMemberCount != null) %}
+                        - {{ currentMemberCount }} von {{ maxMemberCount }} Plätze belegt.
+                        {% endif %}
+                    </i>
+                    <p style="margin-top: 2rem;">{{ information.note|markdown }}</p>
+
+                </div>
+                <div style="padding: 1rem 2rem 3rem 1rem;"><a
+                        style="background: black; color: white; font-weight: bolder; padding: 0.5rem 1rem; text-decoration: none; border-radius: 0.5rem;"
+                        href="{{ registrationLink }}" target="new">
+                        {{ signUpHeadline }}
+                    </a></div>
+            </div>';
     }
 
     /**
@@ -135,7 +180,9 @@ class Ct_Anmeldungen_Admin
             'ChurchTools Anmeldungen',
             'manage_options',
             self::$SETTINGS,
-            array($this, 'options_page_html')
+            array($this, 'options_page_html'),
+            'dashicons-excerpt-view',
+            30
         );
     }
 
@@ -158,10 +205,11 @@ class Ct_Anmeldungen_Admin
 
     public function settings_init()
     {
-        register_setting(self::$SETTINGS, self::$OPTION_URL, 'sanitize_url');
+        register_setting(self::$SETTINGS, self::$OPTION_URL);
         register_setting(self::$SETTINGS, self::$OPTION_GROUP_HASH);
-        register_setting(self::$SETTINGS, self::$OPTION_PARENT_TEMPLATE, array($this, 'sanitize_parent_template'));
-        register_setting(self::$SETTINGS, self::$OPTION_CHILD_TEMPLATE, array($this, 'sanitize_child_template'));
+        register_setting(self::$SETTINGS, self::$OPTION_PARENT_TEMPLATE, ['sanitize_callback' => array($this, 'sanitize_parent_template'), 'default' => self::default_parent_template()]);
+        register_setting(self::$SETTINGS, self::$OPTION_NR_OF_CHILDREN, ['default' => 24]);
+        register_setting(self::$SETTINGS, self::$OPTION_CHILD_TEMPLATE, ['sanitize_callback' => array($this, 'sanitize_child_template'), 'default' => self::default_child_template()]);
 
         add_settings_section(
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section',
@@ -203,6 +251,14 @@ class Ct_Anmeldungen_Admin
         );
 
         add_settings_field(
+            CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_nr_of_children',
+            'Nr. of Children',
+            array($this, 'settings_field_nr_of_children_callback'),
+            self::$SETTINGS,
+            CT_Anmeldungen::$PLUGIN_SLUG . '_settings_section'
+        );
+
+        add_settings_field(
             CT_Anmeldungen::$PLUGIN_SLUG . '_settings_field_child_template',
             'Child-Template',
             array($this, 'settings_field_child_template_callback'),
@@ -233,7 +289,7 @@ class Ct_Anmeldungen_Admin
 
     public function settings_field_shortcode()
     {
-        echo '<b><pre>['.Ct_Anmeldungen_Public::$SHORTCODE.']</pre></b>';
+        echo '<b><pre>[' . Ct_Anmeldungen_Public::$SHORTCODE . ']</pre></b>';
     }
 
     public function settings_field_url_callback()
@@ -252,19 +308,74 @@ class Ct_Anmeldungen_Admin
     public function settings_field_parent_template_callback()
     {
         $template = get_option(self::$OPTION_PARENT_TEMPLATE);
-        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_parent_template_editor', array(
-           'textarea_name' => self::$OPTION_PARENT_TEMPLATE,
-            'media_buttons' => false,
-        ));
+        echo '<textarea name="'.self::$OPTION_PARENT_TEMPLATE.'" style="width: 100%; height: 10rem; font-family:Consolas,Lucida Console,monospace;">'.$template.'</textarea>';
+        echo "<p>Verfügbare Variablen: <li><pre>children</pre></li></p>";
+    }
+
+    public function settings_field_nr_of_children_callback()
+    {
+        $nrOfChildren = get_option(self::$OPTION_NR_OF_CHILDREN);
+        if ($nrOfChildren === null || $nrOfChildren === false) {
+            $nrOfChildren = 4;
+        }
+        echo '<input type="number" name="' . self::$OPTION_NR_OF_CHILDREN . '" value="' . esc_attr($nrOfChildren) . '">';
     }
 
     public function settings_field_child_template_callback()
     {
         $template = get_option(self::$OPTION_CHILD_TEMPLATE);
-        wp_editor($template, CT_Anmeldungen::$PLUGIN_SLUG.'_child_template_editor', array(
-            'textarea_name' => self::$OPTION_CHILD_TEMPLATE,
-            'media_buttons' => false,
-        ));
+        echo '<textarea name="'.self::$OPTION_CHILD_TEMPLATE.'" style="width: 100%; height: 20rem; font-family:Consolas,Lucida Console,monospace;">'.$template.'</textarea>';
+        $this->printExampleData();
+    }
+
+    private function printExampleData()
+    {
+        $exampleData = [];
+        if (file_exists(self::$EXAMPLE_DATA)) {
+            $fileContent = file_get_contents(self::$EXAMPLE_DATA);
+            $exampleData = json_decode($fileContent, true);
+        }
+        CTConfig::setApiUrl(get_option(self::$OPTION_URL) ?? "https://intern.church.tools/");
+        $publicGroup = PublicGroup::createModelFromData($exampleData);
+        $data = Ct_Anmeldungen_Public::parsePublicGroupToData($publicGroup, get_option(self::$OPTION_GROUP_HASH) ?? "hioawoinasdionasd");
+
+        echo "<p>Verfügbare Variablen:</p>";
+        echo "<table><tr><th>Variable</th><th>Example Value</th></tr>";
+        foreach ($data as $key => $value) {
+            echo "<tr><td style='vertical-align: top;'>" . $key . "</td><td>" . $this->convertExampleValueToString($value) . "</td></tr>";
+        }
+        echo "</table>";
+    }
+
+    private function convertExampleValueToString($value)
+    {
+        if (is_object($value) || (is_array($value) && empty($value))) {
+            return json_encode($value);
+        }
+        if (is_array($value)) {
+            $content = "";
+            foreach ($value as $arrKey => $arrValue) {
+                $content .= "<b>" . $arrKey . "</b>: ";
+                if (is_object($arrValue) || is_array($arrValue)) {
+                    $content .= json_encode($arrValue);
+                } else if ($arrValue == null) {
+                    $content .= "null";
+                } else if (is_bool($value)) {
+                    return $value ? 'true' : 'false';
+                } else {
+                    $content .= (string)$arrValue;
+                }
+                $content .= "<br>";
+            }
+            return $content;
+        }
+        if (is_null($value)) {
+            return "null";
+        }
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+        return (string)$value;
     }
 
     public function sanitize_parent_template($templateValue)
@@ -274,13 +385,18 @@ class Ct_Anmeldungen_Admin
             add_settings_error(
                 self::$OPTION_PARENT_TEMPLATE,
                 CT_Anmeldungen::$PLUGIN_SLUG . '_error_parent_template',
-                'Parent-Template muss {{ children|raw }} - Element enthalten.',
+                'Parent-Template muss "{{ children|raw }}" - Element enthalten.',
                 'error'
             );
             return get_option(self::$OPTION_PARENT_TEMPLATE);
         } else {
             return $templateValue;
         }
+    }
+
+    public function sanitize_child_template($templateValue)
+    {
+        return $templateValue;
     }
 
     public function log_section_callback()
@@ -290,6 +406,6 @@ class Ct_Anmeldungen_Admin
 
     public function log_field_log()
     {
-        echo '<pre style="overflow-x: scroll; padding: 1rem; max-width: 60rem;">'.Ct_Anmeldungen::getTailOfWarningLog(5).'</pre>';
+        echo '<pre style="overflow-x: scroll; padding: 1rem; max-width: 60rem;">' . Ct_Anmeldungen::getTailOfWarningLog(5) . '</pre>';
     }
 }

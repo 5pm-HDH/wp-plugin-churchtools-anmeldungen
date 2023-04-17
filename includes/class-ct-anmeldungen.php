@@ -95,6 +95,9 @@ class Ct_Anmeldungen {
     public static function getTailOfWarningLog(int $numberOfLines): string
     {
         $lines = array();
+        if(!file_exists(self::$warningLogFile)){
+            return "";
+        }
         $fp = fopen(self::$warningLogFile, "r");
         while (!feof($fp)) {
             $line = fgets($fp, 4096);
@@ -103,7 +106,7 @@ class Ct_Anmeldungen {
                 array_shift($lines);
         }
         fclose($fp);
-        return implode("", $lines);
+        return implode("", array_reverse($lines));
     }
 
 	/**
@@ -150,8 +153,12 @@ class Ct_Anmeldungen {
         /**
          * Load Composer Dependencies
          */
-        require_once plugin_dir_path( dirname( __FILE__ )) .'vendor/autoload.php';
-
+        $composerDependencies = plugin_dir_path( dirname( __FILE__ )) .'vendor/autoload.php';
+        if(file_exists($composerDependencies)){
+            require_once $composerDependencies;
+        }else{
+            exit("Please install composer dependencies for wp-plugin-churchtools-anmeldungen.");
+        }
 		$this->loader = new Ct_Anmeldungen_Loader();
 
 	}
@@ -190,8 +197,8 @@ class Ct_Anmeldungen {
         $this->loader->add_action('admin_init', $plugin_admin, 'settings_init');
         $this->loader->add_action('admin_menu', $plugin_admin, 'options_page');
 
-        $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_CHILD_TEMPLATE, Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
-        $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_PARENT_TEMPLATE, Ct_Anmeldungen_Admin::class, 'clone_templates_to_disk');
+        $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_CHILD_TEMPLATE, $plugin_admin, 'clone_templates_to_disk');
+        $this->loader->add_action('update_option_'.Ct_Anmeldungen_Admin::$OPTION_PARENT_TEMPLATE, $plugin_admin, 'clone_templates_to_disk');
     }
 
 	/**
